@@ -21,7 +21,7 @@ namespace ColoringGraph
         {
             for (int i = 0; i < AdjMatrix.GetLength(0); i++)
             {
-                Console.Write(i > 9 ? $"{i}:   " : $" {i}:   ");
+                Console.Write(i >= 9 ? $"{i+1}:   " : $" {i+1}:   ");
                 for (int j = 0; j < AdjMatrix.GetLength(1); j++)
                 {
                     Console.Write($"{(AdjMatrix[i, j] ? 1 : 0)} ");
@@ -56,17 +56,20 @@ namespace ColoringGraph
             {
                 case 0:
                     {
-
+                        СoloringAlgorithms alg = new СoloringAlgorithms(AdjMatrix);
+                        alg.BruteForse();
                         break;
                     }
                 case 1:
                     {
-                        TrivialGreedy coloring = new TrivialGreedy(AdjMatrix);
-                        coloring.Coloring();
+                        СoloringAlgorithms alg = new СoloringAlgorithms(AdjMatrix);
+                        alg.TrivialGreedy(AdjMatrix);
                         break;
                     }
                 case 2:
                     {
+                        СoloringAlgorithms alg = new СoloringAlgorithms(AdjMatrix);
+                        alg.GreedyOptimized();
                         break;
                     }
                 default:
@@ -82,8 +85,8 @@ namespace ColoringGraph
             Graph graph;
             Console.WriteLine("Выберите способ задания матрицы: " +
                                "\nИз файла - введите '0'" +
-                               "\n Сгенерировать - введите 'кол-во вершин'" +
-                               "\n Закончить работу - введите -1");
+                               "\nСгенерировать - введите 'кол-во вершин'" +
+                               "\nЗакончить работу - введите -1");
             s = Convert.ToInt32(Console.ReadLine());
             switch (s)
             {
@@ -105,7 +108,7 @@ namespace ColoringGraph
                     {
                         graph = new Graph(s);
                         for (int i = 0; i < s; i++)
-                            for (int j = i; j < s; j++)
+                            for (int j = i+1  ; j < s; j++)
                             {
                                 x = rnd.Next(0, 2);
                                 if (x == 1)
@@ -118,7 +121,6 @@ namespace ColoringGraph
                         AlgorithmSelection(graph.AdjMatrix);
                         break;
                     }
-
             }
         }
     }

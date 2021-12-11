@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace Раскараска_графа
 {
-    internal class BruteForse
+    public class MyType
     {
+        public int Number;
+        public int Degree;
     }
 }
