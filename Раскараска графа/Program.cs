@@ -63,7 +63,7 @@ namespace ColoringGraph
                 case 1:
                     {
                         СoloringAlgorithms alg = new СoloringAlgorithms(AdjMatrix);
-                        alg.TrivialGreedy(AdjMatrix);
+                        alg.TrivialGreedy();
                         break;
                     }
                 case 2:

@@ -2,23 +2,40 @@
 {
     internal class СoloringAlgorithms
     {
-        private bool[,] AdjMatrix;//Матрица смежности
-        
+        private bool[,] AdjMatrix;//Матрица смежности     
         public СoloringAlgorithms(bool[,] AdjMatrix)
         {
             this.AdjMatrix = AdjMatrix;
         }
-        private void PrintColoring(int[] colors)
+        private void PrintColoring(int [] colors)
         {
             //Вывод вершин и соответсвующего цвета
+            Console.WriteLine($"Кол-во используемых цветов = {NumberOfColorsUsed}");
             for (int i = 0; i < AdjMatrix.GetLength(0); i++)
-                Console.WriteLine($"Вершина {i+1} ---> Цвет {colors[i]}");
+                Console.WriteLine($"Вершина {i + 1} ---> Цвет {colors[i]}");
         }
-        public void TrivialGreedy(bool[,] AdjMatrix)//Жадный алгоритм      
+        private List<MyType> Vs = new List<MyType>();
+        private List<List<MyType>> vert_combs = new List<List<MyType>>();
+        private int NumberOfColorsUsed;      
+        private void InitializationVs()
         {
-            int[] colors = new int[AdjMatrix.GetLength(0)]; //Массив цветов
+            for (int i = 0; i < AdjMatrix.GetLength(0); i++)
+            {
+                Vs.Add(new MyType() { Number = i, Degree = 0 });
+            }
+        }
+        public void TrivialGreedy()
+        {
+            //TrivialGreedy(Vs);
+            PrintColoring(TrivialGreedy(Vs));
+        }
+        private int[] TrivialGreedy(List<MyType> Vs)//Жадный алгоритм      
+        {
+
+            int[] colors = new int[AdjMatrix.GetLength(0)];//Массив цветов
+            InitializationVs();
             Array.Fill(colors, -1);//Инициализация всех вершин без цвета
-            colors[0] = 0;//Назначение первой вершине первого цвета
+            colors[Vs[0].Number] = 0;//Назначение первой вершине первого цвета
 
             //Временный массив для хранения доступных цветов.
             //Ложное значение available[cr] будет означать,
@@ -28,55 +45,81 @@
             Array.Fill(available, true);//Все цвета доступны
 
             //Назначаем цвета оставшимся вершинам V - 1
-            for (int i = 1; i < AdjMatrix.GetLength(0); i++)
+            int counter = 1;
+            int k;
+            while (counter < AdjMatrix.GetLength(0))
             {
+                k = Vs[counter].Number;
                 //Обрабатываем все соседние вершины и помечаем их цвета как недоступные
                 for (int j = 0; j < AdjMatrix.GetLength(0); j++)
-                    if (AdjMatrix[i, j])
+                    if (AdjMatrix[k, j])
                         if (colors[j] != -1)
-                        available[colors[j]] = false;
-              
+                            available[colors[j]] = false;
+
                 //Поиск первого доступного цвета
                 int cr;
                 for (cr = 0; cr < AdjMatrix.GetLength(0); cr++)
                     if (available[cr]) break;
 
-                colors[i] = cr;//Назначение найденого цвета
+                colors[k] = cr;//Назначение найденого цвета
 
-                //for (int j = 0; j < AdjMatrix.GetLength(0); j++)
-                //    if (AdjMatrix[i, j])
-                //        if (colors[j] != -1)
-                //        available[colors[j] = true;
                 Array.Fill(available, true);
+                counter++;
             }
-           PrintColoring(colors);
+            NumberOfColorsUsed = colors.Max() + 1;
+            return colors;
         }
         public void GreedyOptimized()
         {
-            bool[,] SortAdjMatrix = AdjMatrix;
-            List<MyType>  vs = new List<MyType>();
-            for(int i=0; i<SortAdjMatrix.GetLength(0); i++)
-            { 
-                vs.Add(new MyType() { Number = i, Degree = 0 });
-            }           
-            for (int i = 0; i < SortAdjMatrix.GetLength(0);i++)
+            InitializationVs();
+            for (int i = 0; i < AdjMatrix.GetLength(0); i++)
             {
-                for(int j = 0;j< SortAdjMatrix.GetLength(0);j++)
+                for (int j = 0; j < AdjMatrix.GetLength(0); j++)
                 {
-                    if (SortAdjMatrix[i, j]) vs[i].Degree++; 
+                    if (AdjMatrix[i, j]) Vs[i].Degree++;
                 }
             }
-            Sort.QuickSort(vs);
-            for (int i = 0; i < vs.Count; i++)
+            Vs = Sort.QuickSort(Vs);
+            Vs.Reverse();           
+            PrintColoring(TrivialGreedy(Vs));
+        }
+        private void Permute(List<MyType> perm, int i, int n) //O(n!)
+        {
+            int j;
+            if (i == n)
             {
-                Console.WriteLine($"вершина {vs[i].Number+1}  сепень { vs[i].Degree}");
+                vert_combs.Add(new List<MyType>(perm));
             }
-            
-            //TrivialGreedy(SortAdjMatrix);
+            else
+            {
+                for (j = i; i < perm.Count; ++j)
+                {
+                    Swap(perm, i, j);
+                    Permute(perm, i + 1, n);
+                    Swap(perm, i, j); //backtrack
+                }
+            }
+        }
+        private static void Swap<T>(IList<T> list, int aIndex, int bIndex)
+        {
+            T value = list[aIndex];
+            list[aIndex] = list[bIndex];
+            list[bIndex] = value;
         }
         public void BruteForse()
         {
-
+            int MinColors = int.MaxValue;
+            List<MyType> myTypes = new List<MyType>();
+            foreach (var combs in vert_combs)
+            {
+                TrivialGreedy(combs);
+                if (NumberOfColorsUsed < MinColors)
+                {
+                    MinColors = NumberOfColorsUsed;
+                    myTypes = combs;
+                }
+            }
+            PrintColoring(TrivialGreedy(myTypes));
         }
     }
 }

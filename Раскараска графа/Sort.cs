@@ -8,11 +8,11 @@ namespace Раскараска_графа
 {
     internal class Sort
     {
-        private static void Swap(ref int x, ref int y)
+        private static void Swap<T>(IList<T> list, int aIndex, int bIndex)
         {
-            var t = x;
-            x = y;
-            y = t;
+            T value = list[aIndex];
+            list[aIndex] = list[bIndex];
+            list[bIndex] = value;
         }
 
         //метод возвращающий индекс опорного элемента
@@ -24,12 +24,12 @@ namespace Раскараска_графа
                 if (array[i].Degree < array[maxIndex].Degree)
                 {
                     pivot++;
-                    Swap(ref array[pivot].Degree, ref array[i].Degree);
+                    Swap( array,pivot,i);
                 }
             }
 
             pivot++;
-            Swap(ref array[pivot].Degree, ref array[maxIndex].Degree);
+            Swap( array,pivot, maxIndex);
             return pivot;
         }
 
