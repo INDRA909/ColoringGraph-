@@ -1,4 +1,6 @@
-﻿namespace Раскараска_графа
+﻿using System.Diagnostics;
+
+namespace Раскараска_графа
 {
     internal class СoloringAlgorithms
     {
@@ -10,6 +12,7 @@
         private void PrintColoring(int [] colors)
         {
             //Вывод вершин и соответсвующего цвета
+            int NumberOfColorsUsed = colors.Max() + 1;
             Console.WriteLine($"Кол-во используемых цветов = {NumberOfColorsUsed}");
             for (int i = 0; i < AdjMatrix.GetLength(0); i++)
                 Console.WriteLine($"Вершина {i + 1} ---> Цвет {colors[i]}");
@@ -25,13 +28,19 @@
         }
         public void TrivialGreedy()
         {
-            PrintColoring(TrivialGreedy(Vs));
+            InitializationVs();
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+            int [] clr = TrivialGreedy(Vs);
+            stopwatch.Stop();
+            Console.WriteLine($"Время работы в Тиках {stopwatch.ElapsedTicks} \tВремя работы в Миллисекундах {stopwatch.ElapsedTicks / 10000} \tВремя работы в Секундах { stopwatch.ElapsedTicks / 10000000} ");
+            PrintColoring(clr);
         }
         private int[] TrivialGreedy(List<MyType> Vs)//Жадный алгоритм      
-        {
-
+        {     
+            
             int[] colors = new int[AdjMatrix.GetLength(0)];//Массив цветов
-            InitializationVs();
+            
             Array.Fill(colors, -1);//Инициализация всех вершин без цвета
             colors[Vs[0].Number] = 0;//Назначение первой вершине первого цвета
 
@@ -63,12 +72,13 @@
 
                 Array.Fill(available, true);
                 counter++;
-            }
-            NumberOfColorsUsed = colors.Max() + 1;
+            }           
             return colors;
         }
         public void GreedyOptimized()
         {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
             InitializationVs();
             for (int i = 0; i < AdjMatrix.GetLength(0); i++)
             {
@@ -79,10 +89,15 @@
             }
             Vs = Sort.QuickSort(Vs);
             Vs.Reverse();           
-            PrintColoring(TrivialGreedy(Vs));
+            int[]clr=TrivialGreedy(Vs);
+            stopwatch.Stop();
+            Console.WriteLine($"Время работы в Тиках {stopwatch.ElapsedTicks} \tВремя работы в Миллисекундах {stopwatch.ElapsedTicks / 10000} \tВремя работы в Секундах { stopwatch.ElapsedTicks / 10000000} ");
+            PrintColoring(clr);
         }       
         public void BruteForse()
         {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
             List<List<MyType>> vert_combs = new List<List<MyType>>();//Список комбинаций - перестановок вершин
             int MinColors = int.MaxValue;//Минимальное использлванное кол-во цветов методом жадной раскраски для всех перестановок
             List<MyType> myTypes = new List<MyType>();//Порядок вершин с минимальным кол-вом использованных цветов
@@ -97,7 +112,10 @@
                     myTypes = combs;
                 }
             }
-            PrintColoring(TrivialGreedy(myTypes));
+            int []clr=TrivialGreedy(myTypes);
+            stopwatch.Stop();
+            Console.WriteLine($"Время работы в Тиках {stopwatch.ElapsedTicks} \tВремя работы в Миллисекундах {stopwatch.ElapsedTicks / 10000} \tВремя работы в Секундах { stopwatch.ElapsedTicks / 10000000} ");
+            PrintColoring(clr);
         }
     }
 }

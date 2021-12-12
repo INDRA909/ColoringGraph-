@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Раскараска_графа;
 namespace ColoringGraph
 {
@@ -19,15 +20,15 @@ namespace ColoringGraph
         }
         public void PrintMatrix()//Вывод матрицы
         {
-            for (int i = 0; i < AdjMatrix.GetLength(0); i++)
-            {
-                Console.Write(i >= 9 ? $"{i+1}:   " : $" {i+1}:   ");
-                for (int j = 0; j < AdjMatrix.GetLength(1); j++)
-                {
-                    Console.Write($"{(AdjMatrix[i, j] ? 1 : 0)} ");
-                }
-                Console.WriteLine();
-            }
+            //for (int i = 0; i < AdjMatrix.GetLength(0); i++)
+            //{
+            //    Console.Write(i >= 9 ? $"{i+1}:   " : $" {i+1}:   ");
+            //    for (int j = 0; j < AdjMatrix.GetLength(1); j++)
+            //    {
+            //        Console.Write($"{(AdjMatrix[i, j] ? 1 : 0)} ");
+            //    }
+            //    Console.WriteLine();
+            //}
         }
     }
     public static class Extensions
@@ -120,6 +121,9 @@ namespace ColoringGraph
                                     }
                                 }
                             graph.PrintMatrix();
+                            //Console.WriteLine("Сохранить матрицу в файл?");
+                            //int k = Convert.ToInt32(Console.ReadLine());
+                            //if(k==0) 
                             AlgorithmSelection(graph.AdjMatrix);
                             break;
                         }
