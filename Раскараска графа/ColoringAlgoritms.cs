@@ -17,27 +17,29 @@ namespace Раскараска_графа
             for (int i = 0; i < AdjMatrix.GetLength(0); i++)
                 Console.WriteLine($"Вершина {i + 1} ---> Цвет {colors[i]}");
         }
-        private List<MyType> Vs = new List<MyType>();       
-        private int NumberOfColorsUsed;      
-        private void InitializationVs()
+        private List<MyType> Vs = new List<MyType>();            
+        private void InitializationVs()//Инициализация структуры хранящей номер вершин и веса
         {
             for (int i = 0; i < AdjMatrix.GetLength(0); i++)
             {
                 Vs.Add(new MyType() { Number = i, Degree = 0 });
             }
         }
-        public void TrivialGreedy()
+        public void TrivialGreedy()//Жадный алгоритм
         {
             InitializationVs();
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
             int [] clr = TrivialGreedy(Vs);
             stopwatch.Stop();
-            Console.WriteLine($"Время работы в Тиках {stopwatch.ElapsedTicks} \tВремя работы в Миллисекундах {stopwatch.ElapsedTicks / 10000} \tВремя работы в Секундах { stopwatch.ElapsedTicks / 10000000} ");
+            Console.WriteLine("Раскраска жадным алгоритмом");
+            Console.WriteLine($"Время работы в Тиках {stopwatch.ElapsedTicks}\t" +
+                               $"Время работы в Миллисекундах {stopwatch.ElapsedTicks / 10000}\t" +
+                               $"Время работы в Секундах { stopwatch.ElapsedTicks / 10000000} ");
             PrintColoring(clr);
         }
-        private int[] TrivialGreedy(List<MyType> Vs)//Жадный алгоритм      
-        {     
+        private int[] TrivialGreedy(List<MyType> Vs)//Жадный алгоритм  для всех других    
+        {    
             
             int[] colors = new int[AdjMatrix.GetLength(0)];//Массив цветов
             
@@ -75,38 +77,48 @@ namespace Раскараска_графа
             }           
             return colors;
         }
-        public void GreedyOptimized()
+        public void GreedyOptimized()//Жадный оптимизированны алгоритм(с учётом степеней вершин)
         {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
             InitializationVs();
-            for (int i = 0; i < AdjMatrix.GetLength(0); i++)
+            for (int i = 0; i < AdjMatrix.GetLength(0); i++)//Обход графа с подсчётом степеней 
             {
                 for (int j = 0; j < AdjMatrix.GetLength(0); j++)
                 {
                     if (AdjMatrix[i, j]) Vs[i].Degree++;
                 }
-            }
-            Vs = Sort.QuickSort(Vs);
-            Vs.Reverse();           
+            }          
+            Vs = Sort.QuickSort(Vs);//Сортировка структуры по степени вершины
+                 
             int[]clr=TrivialGreedy(Vs);
             stopwatch.Stop();
-            Console.WriteLine($"Время работы в Тиках {stopwatch.ElapsedTicks} \tВремя работы в Миллисекундах {stopwatch.ElapsedTicks / 10000} \tВремя работы в Секундах { stopwatch.ElapsedTicks / 10000000} ");
+            Console.WriteLine("Раскраска жадным-оптимизированным алгоритмом");
+            Console.WriteLine($"Время работы в Тиках {stopwatch.ElapsedTicks}\t" +
+                               $"Время работы в Миллисекундах {stopwatch.ElapsedTicks / 10000}\t" +
+                               $"Время работы в Секундах { stopwatch.ElapsedTicks / 10000000} ");
             PrintColoring(clr);
         }       
         public void BruteForse()
         {
-            Stopwatch stopwatch = new Stopwatch();
+            Stopwatch stopwatch = new Stopwatch();          
             stopwatch.Start();
-            List<List<MyType>> vert_combs = new List<List<MyType>>();//Список комбинаций - перестановок вершин
-            int MinColors = int.MaxValue;//Минимальное использлванное кол-во цветов методом жадной раскраски для всех перестановок
-            List<MyType> myTypes = new List<MyType>();//Порядок вершин с минимальным кол-вом использованных цветов
-            InitializationVs();//Инизиализация изначального порядка вершин(по порядку номера)
+            //Список комбинаций - перестановок вершин
+            List<List<MyType>> vert_combs = new List<List<MyType>>();
+            //Минимальное использлванное кол-во цветов методом жадной раскраски для всех перестановок
+            int MinColors = int.MaxValue;
+            //Порядок вершин с минимальным кол-вом использованных цветов
+            List<MyType> myTypes = new List<MyType>();
+            //Инизиализация изначального порядка вершин(по порядку номера)
+            InitializationVs();
+            //Заполнение списка перестановок вершин
             vert_combs = PermutationExtension.Permutations(Vs);
-            foreach (var combs in vert_combs)//Перебор всех перестановок для жадного алгоритма
+            //Кол-во цветов для рассматриваемой перестановки
+            int NumberOfColorsUsed;
+            foreach (var combs in vert_combs)//Перебор всех перестановок для жадного алгоритма и поиск оптимальой
             {
-                TrivialGreedy(combs);
-                if (NumberOfColorsUsed < MinColors)
+                NumberOfColorsUsed=TrivialGreedy(combs).Max()+1;
+                if (NumberOfColorsUsed < MinColors)//Выбор перестановки с минимальным кол-вом цветов
                 {
                     MinColors = NumberOfColorsUsed;
                     myTypes = combs;
@@ -114,7 +126,10 @@ namespace Раскараска_графа
             }
             int []clr=TrivialGreedy(myTypes);
             stopwatch.Stop();
-            Console.WriteLine($"Время работы в Тиках {stopwatch.ElapsedTicks} \tВремя работы в Миллисекундах {stopwatch.ElapsedTicks / 10000} \tВремя работы в Секундах { stopwatch.ElapsedTicks / 10000000} ");
+            Console.WriteLine("Раскраска алгоритмом полного перебора");
+            Console.WriteLine($"Время работы в Тиках {stopwatch.ElapsedTicks}\t" +
+                              $"Время работы в Миллисекундах {stopwatch.ElapsedTicks / 10000}\t" +
+                              $"Время работы в Секундах { stopwatch.ElapsedTicks / 10000000} ");
             PrintColoring(clr);
         }
     }

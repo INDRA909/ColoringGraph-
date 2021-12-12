@@ -1,52 +1,11 @@
-﻿using System;
-using System.Diagnostics;
-using Раскараска_графа;
+﻿using Раскараска_графа;
 namespace ColoringGraph
-{
-    public class Graph
-    {
-        public bool[,] AdjMatrix;//Матрица смежности
-        private int NumVertices;//Кол-во вершин
-        public Graph(int NumVerticies)
-        {
-
-            NumVertices = NumVerticies;
-            AdjMatrix = new bool[NumVertices, NumVertices];
-        }
-        public void AddEdge(int i, int j)//Добавление ребра
-        {
-            AdjMatrix[i, j] = true;
-            AdjMatrix[j, i] = true;
-        }
-        public void PrintMatrix()//Вывод матрицы
-        {
-            //for (int i = 0; i < AdjMatrix.GetLength(0); i++)
-            //{
-            //    Console.Write(i >= 9 ? $"{i+1}:   " : $" {i+1}:   ");
-            //    for (int j = 0; j < AdjMatrix.GetLength(1); j++)
-            //    {
-            //        Console.Write($"{(AdjMatrix[i, j] ? 1 : 0)} ");
-            //    }
-            //    Console.WriteLine();
-            //}
-        }
-    }
-    public static class Extensions
-    {
-        public static T[,] ToRectangularArray<T>(this IReadOnlyList<T[]> arrays)//Метод расширения для удобного считывания из файла
-        {
-            var ret = new T[arrays.Count, arrays[0].Length];
-            for (var i = 0; i < arrays.Count; i++)
-                for (var j = 0; j < arrays[0].Length; j++)
-                    ret[i, j] = arrays[i][j];
-            return ret;
-        }
-    }
+{ 
     class Program
     {
         private static void AlgorithmSelection(bool[,] AdjMatrix)
         {
-            int k;
+            int k;//Выбор пользователя
             Console.WriteLine("Выберите алгоритм раскраски: " +
                                "\nПолный перебор - введите '0'" +
                                "\nЖадный - введите '1'" +
@@ -79,28 +38,44 @@ namespace ColoringGraph
                     }
             }
         }
+        private static Graph GeneratingGraph(Graph graph,int n)
+        {
+            Random rnd = new Random(DateTime.Now.Millisecond);
+            int x;
+            for (int i = 0; i < n; i++)
+                for (int j = i + 1; j < n; j++)
+                {
+                    x = rnd.Next(0, 2);
+                    if (x == 1)
+                    {
+                        graph.AddEdge(i, j);
+                        graph.AddEdge(j, i);
+                    }
+                }
+            return graph;
+        }
         static void Main(string[] Args)
         {
-            int s, x;
-            Random rnd = new Random(DateTime.Now.Millisecond);
+            string filePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)+ @"\\MyAdjMatrix.txt";//Путь к считываемому файлу на рабочем столе
+            int n;//Выбор пользователя - Кол-во вершин графа      
             Graph graph;
             do
             {
                 Console.WriteLine("Выберите способ задания матрицы: " +
                                    "\nИз файла - введите '0'" +
                                    "\nСгенерировать - введите 'кол-во вершин'" +
-                                   "\nЗакончить работу - введите -1");
-                s = Convert.ToInt32(Console.ReadLine());
-                switch (s)
+                                   "\nЗакончить работу - введите '-1' ");
+                n = Convert.ToInt32(Console.ReadLine());
+                switch (n)
                 {
                     case 0://Считывание матрицв из файла
                         {
                             graph = new Graph(0);
-                            graph.AdjMatrix = File.ReadAllLines("MyAdjMatrix.txt").Select(x => x.Split(' ')
+                            graph.AdjMatrix = File.ReadAllLines(filePath).Select(x => x.Split(' ')
                                                                                   .Select(int.Parse).Select(x => (x == 1 ? true : false))
                                                                                   .ToArray()).ToArray().ToRectangularArray();
-                            graph.PrintMatrix();
-                            AlgorithmSelection(graph.AdjMatrix);
+                            graph.PrintMatrix();//Вывод матрицы
+                            AlgorithmSelection(graph.AdjMatrix);//Выбор алгоритма сортировки
                             break;
                         }
                     case -1://Выход
@@ -109,27 +84,15 @@ namespace ColoringGraph
                         }
                     default://Генерация матрицы
                         {
-                            graph = new Graph(s);
-                            for (int i = 0; i < s; i++)
-                                for (int j = i + 1; j < s; j++)
-                                {
-                                    x = rnd.Next(0, 2);
-                                    if (x == 1)
-                                    {
-                                        graph.AddEdge(i, j);
-                                        graph.AddEdge(j, i);
-                                    }
-                                }
-                            graph.PrintMatrix();
-                            //Console.WriteLine("Сохранить матрицу в файл?");
-                            //int k = Convert.ToInt32(Console.ReadLine());
-                            //if(k==0) 
-                            AlgorithmSelection(graph.AdjMatrix);
+                            graph = new Graph(n);
+                            graph = GeneratingGraph(graph, n);//Генерация матрицы
+                            graph.PrintMatrix();//Вывод матрицы
+                            AlgorithmSelection(graph.AdjMatrix);//Выбор алгоритма сортировки
                             break;
                         }
                 }
                 Console.WriteLine("\n-------------------------------------------------------------");
-            } while (s != -1);
+            } while (n != -1);
         }
     }
 }

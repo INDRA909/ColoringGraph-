@@ -15,7 +15,7 @@
             var pivot = minIndex - 1;
             for (var i = minIndex; i < maxIndex; i++)
             {
-                if (array[i].Degree < array[maxIndex].Degree)
+                if (array[i].Degree > array[maxIndex].Degree)
                 {
                     pivot++;
                     Swap( array,pivot,i);

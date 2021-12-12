@@ -1,6 +1,6 @@
 ﻿namespace Раскараска_графа
 {
-    internal static class PermutationExtension
+    internal static class PermutationExtension//Класс для перестановок
     {
         public static List<List<MyType>> Permutations(List<MyType> source)
         {

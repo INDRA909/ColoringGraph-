@@ -2,7 +2,7 @@
 {
     public class MyType
     {
-        public int Number;
-        public int Degree;
+        public int Number;//Номер вершины
+        public int Degree;//Степень вершины
     }
 }
