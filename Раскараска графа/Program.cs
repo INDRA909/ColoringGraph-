@@ -83,45 +83,49 @@ namespace ColoringGraph
             int s, x;
             Random rnd = new Random(DateTime.Now.Millisecond);
             Graph graph;
-            Console.WriteLine("Выберите способ задания матрицы: " +
-                               "\nИз файла - введите '0'" +
-                               "\nСгенерировать - введите 'кол-во вершин'" +
-                               "\nЗакончить работу - введите -1");
-            s = Convert.ToInt32(Console.ReadLine());
-            switch (s)
+            do
             {
-                case 0://Считывание матрицв из файла
-                    {
-                        graph = new Graph(0);
-                        graph.AdjMatrix = File.ReadAllLines("MyAdjMatrix.txt").Select(x => x.Split(' ')
-                                                                              .Select(int.Parse).Select(x => (x == 1 ? true : false))
-                                                                              .ToArray()).ToArray().ToRectangularArray();
-                        graph.PrintMatrix();
-                        AlgorithmSelection(graph.AdjMatrix);
-                        break;
-                    }
-                case -1://Выход
-                    {
-                        break;
-                    }
-                default://Генерация матрицы
-                    {
-                        graph = new Graph(s);
-                        for (int i = 0; i < s; i++)
-                            for (int j = i+1  ; j < s; j++)
-                            {
-                                x = rnd.Next(0, 2);
-                                if (x == 1)
+                Console.WriteLine("Выберите способ задания матрицы: " +
+                                   "\nИз файла - введите '0'" +
+                                   "\nСгенерировать - введите 'кол-во вершин'" +
+                                   "\nЗакончить работу - введите -1");
+                s = Convert.ToInt32(Console.ReadLine());
+                switch (s)
+                {
+                    case 0://Считывание матрицв из файла
+                        {
+                            graph = new Graph(0);
+                            graph.AdjMatrix = File.ReadAllLines("MyAdjMatrix.txt").Select(x => x.Split(' ')
+                                                                                  .Select(int.Parse).Select(x => (x == 1 ? true : false))
+                                                                                  .ToArray()).ToArray().ToRectangularArray();
+                            graph.PrintMatrix();
+                            AlgorithmSelection(graph.AdjMatrix);
+                            break;
+                        }
+                    case -1://Выход
+                        {
+                            break;
+                        }
+                    default://Генерация матрицы
+                        {
+                            graph = new Graph(s);
+                            for (int i = 0; i < s; i++)
+                                for (int j = i + 1; j < s; j++)
                                 {
-                                    graph.AddEdge(i, j);
-                                    graph.AddEdge(j, i);
+                                    x = rnd.Next(0, 2);
+                                    if (x == 1)
+                                    {
+                                        graph.AddEdge(i, j);
+                                        graph.AddEdge(j, i);
+                                    }
                                 }
-                            }
-                        graph.PrintMatrix();
-                        AlgorithmSelection(graph.AdjMatrix);
-                        break;
-                    }
-            }
+                            graph.PrintMatrix();
+                            AlgorithmSelection(graph.AdjMatrix);
+                            break;
+                        }
+                }
+                Console.WriteLine("\n-------------------------------------------------------------");
+            } while (s != -1);
         }
     }
 }

@@ -14,8 +14,7 @@
             for (int i = 0; i < AdjMatrix.GetLength(0); i++)
                 Console.WriteLine($"Вершина {i + 1} ---> Цвет {colors[i]}");
         }
-        private List<MyType> Vs = new List<MyType>();
-        private List<List<MyType>> vert_combs = new List<List<MyType>>();
+        private List<MyType> Vs = new List<MyType>();       
         private int NumberOfColorsUsed;      
         private void InitializationVs()
         {
@@ -26,7 +25,6 @@
         }
         public void TrivialGreedy()
         {
-            //TrivialGreedy(Vs);
             PrintColoring(TrivialGreedy(Vs));
         }
         private int[] TrivialGreedy(List<MyType> Vs)//Жадный алгоритм      
@@ -82,35 +80,15 @@
             Vs = Sort.QuickSort(Vs);
             Vs.Reverse();           
             PrintColoring(TrivialGreedy(Vs));
-        }
-        private void Permute(List<MyType> perm, int i, int n) //O(n!)
-        {
-            int j;
-            if (i == n)
-            {
-                vert_combs.Add(new List<MyType>(perm));
-            }
-            else
-            {
-                for (j = i; i < perm.Count; ++j)
-                {
-                    Swap(perm, i, j);
-                    Permute(perm, i + 1, n);
-                    Swap(perm, i, j); //backtrack
-                }
-            }
-        }
-        private static void Swap<T>(IList<T> list, int aIndex, int bIndex)
-        {
-            T value = list[aIndex];
-            list[aIndex] = list[bIndex];
-            list[bIndex] = value;
-        }
+        }       
         public void BruteForse()
         {
-            int MinColors = int.MaxValue;
-            List<MyType> myTypes = new List<MyType>();
-            foreach (var combs in vert_combs)
+            List<List<MyType>> vert_combs = new List<List<MyType>>();//Список комбинаций - перестановок вершин
+            int MinColors = int.MaxValue;//Минимальное использлванное кол-во цветов методом жадной раскраски для всех перестановок
+            List<MyType> myTypes = new List<MyType>();//Порядок вершин с минимальным кол-вом использованных цветов
+            InitializationVs();//Инизиализация изначального порядка вершин(по порядку номера)
+            vert_combs = PermutationExtension.Permutations(Vs);
+            foreach (var combs in vert_combs)//Перебор всех перестановок для жадного алгоритма
             {
                 TrivialGreedy(combs);
                 if (NumberOfColorsUsed < MinColors)
