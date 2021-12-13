@@ -1,6 +1,6 @@
 ﻿using Раскараска_графа;
 namespace ColoringGraph
-{ 
+{
     class Program
     {
         private static void AlgorithmSelection(bool[,] AdjMatrix)
@@ -17,7 +17,7 @@ namespace ColoringGraph
                 case 0:
                     {
                         СoloringAlgorithms alg = new СoloringAlgorithms(AdjMatrix);
-                        alg.BruteForse();
+                        alg.BruteForce();
                         break;
                     }
                 case 1:
@@ -38,33 +38,58 @@ namespace ColoringGraph
                     }
             }
         }
-        private static Graph GeneratingGraph(Graph graph,int n)
+        private static void Testing()
         {
-            Random rnd = new Random(DateTime.Now.Millisecond);
-            int x;
+            int NumColorBruteForse;
+            int NumColorTrivialGreedy;
+            int NumColorOptimizetGreedy;
+            int ErrorTrivialGreedy = 0;
+            int ErrorOptimizetGreedy = 0;
+            double OtklTrivial = 0;
+            double OtklOptimized = 0;
+            int n, m;//Выбор пользователя - Кол-во вершин графа      
+            Console.Write("Введите сколько кол-во тестов - ");
+            n = Convert.ToInt32(Console.ReadLine());
+            Console.Write("Введите размерность матрицы - ");
+            m = Convert.ToInt32(Console.ReadLine());
+            Graph graph = new Graph(m);
             for (int i = 0; i < n; i++)
-                for (int j = i + 1; j < n; j++)
+            {
+                Console.WriteLine($"Номер Итерации {i}");
+                СoloringAlgorithms alg = new СoloringAlgorithms(graph.RandomGeneratingGraph(graph, m).AdjMatrix);
+                NumColorBruteForse = alg.BruteForceNoOut().Max() + 1;
+                NumColorOptimizetGreedy = alg.TrivialGreedyNoOut().Max() + 1;
+                NumColorTrivialGreedy = alg.GreedyOptimizedNoOut().Max() + 1;
+                Console.WriteLine($"Кол-во используемых цветов:" +
+                    $"\nПолный перебор = {NumColorBruteForse} Жадный = {NumColorTrivialGreedy} Жадный оптимизированный = {NumColorOptimizetGreedy}");
+                if (NumColorOptimizetGreedy != NumColorBruteForse)
                 {
-                    x = rnd.Next(0, 2);
-                    if (x == 1)
-                    {
-                        graph.AddEdge(i, j);
-                        graph.AddEdge(j, i);
-                    }
+                    ErrorOptimizetGreedy++;
+                    OtklOptimized += (double)(Math.Abs(NumColorOptimizetGreedy - NumColorBruteForse) / (double)NumColorBruteForse);
                 }
-            return graph;
+                if (NumColorTrivialGreedy != NumColorBruteForse)
+                {
+                    ErrorTrivialGreedy++;
+                    OtklTrivial += (double)(Math.Abs(NumColorTrivialGreedy - NumColorBruteForse) / (double)NumColorBruteForse);
+                }
+
+                Console.WriteLine("\n-------------------------------------------------------------------------");
+            }
+            Console.WriteLine($"Ошибок для тривиального {ErrorTrivialGreedy} Cреднее отклонение {OtklTrivial / 100}" +
+                       $" Ошибок для оптимизмрованного {ErrorOptimizetGreedy} Cреднее отклонение {OtklOptimized / 100} ");
         }
         static void Main(string[] Args)
         {
-            string filePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)+ @"\\MyAdjMatrix.txt";//Путь к считываемому файлу на рабочем столе
+            string filePath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + @"\\MyAdjMatrix.txt";//Путь к считываемому файлу на рабочем столе
             int n;//Выбор пользователя - Кол-во вершин графа      
             Graph graph;
             do
             {
-                Console.WriteLine("Выберите способ задания матрицы: " +
-                                   "\nИз файла - введите '0'" +
-                                   "\nСгенерировать - введите 'кол-во вершин'" +
-                                   "\nЗакончить работу - введите '-1' ");
+                Console.WriteLine("Выберите пункт и введите соответсвующее значение: " +
+                                   "\nИз файла - введите '0' (на рабочем столе должен быть файл 'MyAdjMatrix.txt')" +
+                                   "\nСгенерировать - введите необходимо кол-во вершин 'n'" +
+                                   "\nТестирование - введите '-2'" +
+                                   "\nЗакончить работу - введите '-1'");
                 n = Convert.ToInt32(Console.ReadLine());
                 switch (n)
                 {
@@ -82,10 +107,15 @@ namespace ColoringGraph
                         {
                             break;
                         }
+                    case -2://Тестирование
+                        {
+                            Testing();
+                            break;
+                        }
                     default://Генерация матрицы
                         {
                             graph = new Graph(n);
-                            graph = GeneratingGraph(graph, n);//Генерация матрицы
+                            graph = graph.RandomGeneratingGraph(graph, n);//Генерация матрицы
                             graph.PrintMatrix();//Вывод матрицы
                             AlgorithmSelection(graph.AdjMatrix);//Выбор алгоритма сортировки
                             break;
