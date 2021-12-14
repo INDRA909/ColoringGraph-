@@ -52,10 +52,11 @@ namespace ColoringGraph
             n = Convert.ToInt32(Console.ReadLine());
             Console.Write("Введите размерность матрицы - ");
             m = Convert.ToInt32(Console.ReadLine());
-            Graph graph = new Graph(m);
+            Graph graph;
             for (int i = 0; i < n; i++)
             {
                 Console.WriteLine($"Номер Итерации {i}");
+                graph= new Graph(m);
                 СoloringAlgorithms alg = new СoloringAlgorithms(graph.RandomGeneratingGraph(graph, m).AdjMatrix);
                 NumColorBruteForse = alg.BruteForceNoOut().Max() + 1;
                 NumColorOptimizetGreedy = alg.TrivialGreedyNoOut().Max() + 1;

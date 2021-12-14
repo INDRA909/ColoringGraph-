@@ -1,6 +1,6 @@
 ﻿namespace Раскараска_графа
 {
-    internal static class Extensions
+    internal static class ExtensionsReadFile
     {
         //Метод расширения для удобного считывания из файла
         public static T[,] ToRectangularArray<T>(this IReadOnlyList<T[]> arrays)

@@ -34,7 +34,7 @@ namespace Раскараска_графа
             stopwatch.Stop();
             Console.WriteLine("Раскраска жадным алгоритмом");
             PrintColoring(colors);
-            Console.WriteLine(ExecutionTime(stopwatch));
+            Console.WriteLine(ExtensionsTime.TimeOut(stopwatch));
         }
         public int[] TrivialGreedyNoOut()//Жадный алгоритм
         {
@@ -86,7 +86,7 @@ namespace Раскараска_графа
             stopwatch.Stop();
             Console.WriteLine("Раскраска жадным-оптимизированным алгоритмом");
             PrintColoring(colors);
-            Console.WriteLine(ExecutionTime(stopwatch));
+            Console.WriteLine(ExtensionsTime.TimeOut(stopwatch));
         }
         public int[] GreedyOptimizedNoOut()//Жадный оптимизированны алгоритм(с учётом степеней вершин)
         {
@@ -139,15 +139,8 @@ namespace Раскараска_графа
             stopwatch.Stop();
             Console.WriteLine("Раскраска алгоритмом полного перебора");
             PrintColoring(colors);
-            Console.WriteLine(ExecutionTime(stopwatch));
+            Console.WriteLine(ExtensionsTime.TimeOut(stopwatch));
         }
-        private string ExecutionTime(Stopwatch stopwatch)
-        {
-            Console.WriteLine();
-            string time = $"Время работы в Тиках {stopwatch.ElapsedTicks}\t" +
-                              $"Время работы в Миллисекундах {stopwatch.ElapsedTicks / 10000}\t" +
-                              $"Время работы в Секундах { stopwatch.ElapsedTicks / 10000000} ";
-            return time;
-        }
+        
     }
 }
