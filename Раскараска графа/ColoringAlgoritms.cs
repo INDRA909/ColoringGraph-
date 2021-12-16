@@ -129,6 +129,7 @@ namespace Раскараска_графа
                     myTypes = combs;
                 }
             }
+            colors= TrivialGreedy(myTypes);
             return colors;
         }
         public void BruteForce()
